@@ -1,5 +1,5 @@
 [build]
-  command = "npx --yes vite build"
+  command = "npm install --include=dev && npx vite build"
   publish = "dist"
   functions = "netlify/functions"
 
