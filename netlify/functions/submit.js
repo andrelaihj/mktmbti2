@@ -122,12 +122,11 @@ exports.handler = async function (event, context) {
       '提交时间': new Date().toISOString(),
       '诊断类型': diagnosis?.type || '',
       '画像标签': diagnosis?.tag || '',
-      '产能底气': { number: Number(diagnosis?.dimensions?.capacity) || 0 },
-      '市场嗅觉': { number: Number(diagnosis?.dimensions?.market) || 0 },
-      '行动惯性': { number: Number(diagnosis?.dimensions?.action) || 0 },
-      '决策算账': { number: Number(diagnosis?.dimensions?.decision) || 0 },
-    };
-
+      '产能底气': String(diagnosis?.dimensions?.capacity ?? ''),
+      '市场嗅觉': String(diagnosis?.dimensions?.market ?? ''),
+      '行动惯性': String(diagnosis?.dimensions?.action ?? ''),
+      '决策算账': String(diagnosis?.dimensions?.decision ?? ''),
+};
     // 写入飞书
     const result = await createRecord(token, appToken, tableId, fields);
 
