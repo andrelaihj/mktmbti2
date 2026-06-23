@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>十五型画像分类拼图</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; 
+      background: #0a0a0f; 
+      color: #fff; 
+      min-height: 100vh;
+      padding: 30px;
+    }
+    .page-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .page-title h1 {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .page-title p {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .category-section {
+      margin-bottom: 50px;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: linear-gradient(90deg, rgba(99,102,241,0.2) 0%, transparent 100%);
+      border-left: 4px solid #6366f1;
+      border-radius: 0 12px 12px 0;
+    }
+    .category-icon { font-size: 28px; margin-right: 15px; }
+    .category-title { font-size: 20px; font-weight: 700; }
+    .category-count { 
+      margin-left: auto; 
+      background: rgba(99,102,241,0.3); 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-size: 12px;
+    }
+    .category-desc {
+      color: #888;
+      font-size: 13px;
+      margin-left: 15px;
+    }
+    
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .profile-card {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #2a2a4e;
+      transition: all 0.3s;
+    }
+    .profile-card:hover {
+      transform: translateY(-5px);
+      border-color: #6366f1;
+      box-shadow: 0 10px 30px rgba(99,102,241,0.2);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .card-emoji { font-size: 36px; margin-right: 12px; }
+    .card-type {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .card-title {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+    
+    .card-summary {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+    
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .card-tag {
+      padding: 4px 10px;
+      background: rgba(99,102,241,0.2);
+      color: #818cf8;
+      font-size: 11px;
+      border-radius: 12px;
+    }
+    
+    .dimension-bars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #2a2a4e;
+    }
+    .dim-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dim-label { font-size: 10px; color: #64748b; width: 45px; }
+    .dim-bar { flex: 1; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+    .dim-fill { height: 100%; border-radius: 2px; }
+    
+    .category-1 .category-header { border-left-color: #10b981; }
+    .category-2 .category-header { border-left-color: #f59e0b; }
+    .category-3 .category-header { border-left-color: #ef4444; }
+    .category-4 .category-header { border-left-color: #6366f1; }
+    .category-5 .category-header { border-left-color: #ec4899; }
+    
+    @media print {
+      body { background: #fff; color: #000; padding: 20px; }
+      .profile-card { background: #fff; border: 1px solid #ddd; }
+      .card-summary, .card-title, .card-desc { color: #333; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">
+    <h1>十五型出海画像分类拼图</h1>
+    <p>根据业务认知 / 产品资源 / 当前卡点 / 市场调研的本质现象划分</p>
+  </div>
+
+  <div class="category-section category-1">
+    <div class="category-header">
+      <span class="category-icon">🏭</span>
+      <div>
+        <div class="category-title">制造实力派</div>
+        <div class="category-desc">有产品有产能，但困于"酒香也怕巷子深"</div>
+      </div>
+      <span class="category-count">3种画像</span>
+    </div>
+    <div class="cards-grid">
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🏭</span>
+          <div>
+            <span class="card-type">A型</span>
+            <div class="card-title">制造巨匠 · 匠心独运</div>
+          </div>
+        </div>
+        <div class="card-summary">有产品有产能，品质打磨到极致，但不懂展示、不擅营销，好东西卖不出好价。</div>
+        <div class="card-tags">
+          <span class="card-tag">专注制造</span>
+          <span class="card-tag">品质优先</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:85%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🛡️</span>
+          <div>
+            <span class="card-type">I型</span>
+            <div class="card-title">基业长青 · 稳扎稳打</div>
+          </div>
+        </div>
+        <div class="card-summary">风险意识强，财务管理出色，但稳健=保守，错失多次机会却不敢动。</div>
+        <div class="card-tags">
+          <span class="card-tag">风险厌恶</span>
+          <span class="card-tag">长期主义</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🎒</span>
+          <div>
+            <span class="card-type">K型</span>
+            <div class="card-title">厉兵秣马 · 准备周全</div>
+          </div>
+        </div>
+        <div class="card-summary">资质证书齐全，知识储备充分，但永远在准备，从不上场。</div>
+        <div class="card-tags">
+          <span class="card-tag">过度准备</span>
+          <span class="card-tag">追求完美</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:80%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:75%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-section category-2">
+    <div class="category-header">
+      <span class="category-icon">🔮</span>
+      <div>
+        <div class="category-title">觉醒观望派</div>
+        <div class="category-desc">看得多想得多，但永远停在"第一步"之前</div>
+      </div>
+      <span class="category-count">5种画像</span>
+    </div>
+    <div class="cards-grid">
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🔮</span>
+          <div>
+            <span class="card-type">B型</span>
+            <div class="card-title">趋势探索者 · 洞若观火</div>
+          </div>
+        </div>
+        <div class="card-summary">洞察力强，能从新闻看商机，但永远觉得"条件不够成熟"，笔记本写满洞察从不落地。</div>
+        <div class="card-tags">
+          <span class="card-tag">洞察先机</span>
+          <span class="card-tag">过度分析</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:45%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:80%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:50%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🧮</span>
+          <div>
+            <span class="card-type">D型</span>
+            <div class="card-title">想太多先生 · 决策瘫痪</div>
+          </div>
+        </div>
+        <div class="card-summary">风险意识强，分析报告写了几十份，但每份都是"未完成"，永远下不了决定。</div>
+        <div class="card-tags">
+          <span class="card-tag">分析过度</span>
+          <span class="card-tag">决策恐惧</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:50%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:50%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:85%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🌈</span>
+          <div>
+            <span class="card-type">H型</span>
+            <div class="card-title">规划型选手 · 完美计划</div>
+          </div>
+        </div>
+        <div class="card-summary">战略眼光好，商业计划书从1.0写到12.0，但永远停在第一步，脑子里装着完整帝国。</div>
+        <div class="card-tags">
+          <span class="card-tag">战略规划</span>
+          <span class="card-tag">计划拖延</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🤔</span>
+          <div>
+            <span class="card-type">F型</span>
+            <div class="card-title">差一步先生 · 永远准备中</div>
+          </div>
+        </div>
+        <div class="card-summary">有基础认知但不深入，上月亚马逊，本月独立站，下月TikTok，永远在换方向。</div>
+        <div class="card-tags">
+          <span class="card-tag">浅尝辄止</span>
+          <span class="card-tag">方向迷茫</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:58%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:52%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:56%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">📊</span>
+          <div>
+            <span class="card-type">M型</span>
+            <div class="card-title">精算型 · 算了不动</div>
+          </div>
+        </div>
+        <div class="card-summary">数据分析能力强，每件事都算得清清楚楚，但算完发现"风险太高"，永远不下水。</div>
+        <div class="card-tags">
+          <span class="card-tag">过度精算</span>
+          <span class="card-tag">风险规避</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:60%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:60%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:75%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-section category-3">
+    <div class="category-header">
+      <span class="category-icon">🚀</span>
+      <div>
+        <div class="category-title">行动冲锋派</div>
+        <div class="category-desc">执行力强但缺聚焦，要么盲目冲动要么四处打游击</div>
+      </div>
+      <span class="category-count">4种画像</span>
+    </div>
+    <div class="cards-grid">
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🚀</span>
+          <div>
+            <span class="card-type">C型</span>
+            <div class="card-title">破局先锋 · 冲动型选手</div>
+          </div>
+        </div>
+        <div class="card-summary">执行力强，想到就干，但方向不对跑得越快离目标越远，学费交了一轮又一轮。</div>
+        <div class="card-tags">
+          <span class="card-tag">冲动行动</span>
+          <span class="card-tag">缺瞄准镜</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:50%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:85%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">💨</span>
+          <div>
+            <span class="card-type">G型</span>
+            <div class="card-title">机会猎人 · 蜻蜓点水</div>
+          </div>
+        </div>
+        <div class="card-summary">嗅觉敏锐，到处追风口，但什么试过什么没做成，像蝴蝶到处采蜜但不酿蜜。</div>
+        <div class="card-tags">
+          <span class="card-tag">机会导向</span>
+          <span class="card-tag">缺乏聚焦</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🌀</span>
+          <div>
+            <span class="card-type">J型</span>
+            <div class="card-title">追风人 · 永远慢半拍</div>
+          </div>
+        </div>
+        <div class="card-summary">什么火做什么，亚马逊火做亚马逊，TikTok火做TikTok，但每次都慢一步。</div>
+        <div class="card-tags">
+          <span class="card-tag">追风口</span>
+          <span class="card-tag">慢半拍</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🔥</span>
+          <div>
+            <span class="card-type">N型</span>
+            <div class="card-title">热血型 · 心有余力不足</div>
+          </div>
+        </div>
+        <div class="card-summary">有梦想有野心，但连一张海外订单都没有，野心和能力之间隔着一道鸿沟。</div>
+        <div class="card-tags">
+          <span class="card-tag">志在四方</span>
+          <span class="card-tag">热情空转</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:40%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:75%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:75%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-section category-4">
+    <div class="category-header">
+      <span class="category-icon">⭐</span>
+      <div>
+        <div class="category-title">蓄势待发派</div>
+        <div class="category-desc">什么条件都有，但就是迈不出那一步</div>
+      </div>
+      <span class="category-count">1种画像</span>
+    </div>
+    <div class="cards-grid">
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">⭐</span>
+          <div>
+            <span class="card-type">E型</span>
+            <div class="card-title">六边形战士 · 差一步</div>
+          </div>
+        </div>
+        <div class="card-summary">能力全面均衡，资源眼光执行力都不缺，但就是不动，"再等等看"是口头禅。</div>
+        <div class="card-tags">
+          <span class="card-tag">全面均衡</span>
+          <span class="card-tag">原地踏步</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:75%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:72%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:68%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:70%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-section category-5">
+    <div class="category-header">
+      <span class="category-icon">🥚</span>
+      <div>
+        <div class="category-title">新手探索派</div>
+        <div class="category-desc">认知或资源尚在起步，需要从零开始</div>
+      </div>
+      <span class="category-count">2种画像</span>
+    </div>
+    <div class="cards-grid">
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">⚡</span>
+          <div>
+            <span class="card-type">L型</span>
+            <div class="card-title">门外汉 · 认知空白</div>
+          </div>
+        </div>
+        <div class="card-summary">有热情有野心，但没工厂没产品没客户没资源，处于"危险边缘试探"状态。</div>
+        <div class="card-tags">
+          <span class="card-tag">盲目探索</span>
+          <span class="card-tag">资源匮乏</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="card-header">
+          <span class="card-emoji">🥚</span>
+          <div>
+            <span class="card-type">O型</span>
+            <div class="card-title">初学者 · 还没入门</div>
+          </div>
+        </div>
+        <div class="card-summary">刚听说"跨境电商"这个词，认知水平相当于刚知道1+1=2就去参加奥数竞赛。</div>
+        <div class="card-tags">
+          <span class="card-tag">白纸型</span>
+          <span class="card-tag">认知空白</span>
+        </div>
+        <div class="dimension-bars">
+          <div class="dim-item"><span class="dim-label">产能底气</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#10b981"></div></div></div>
+          <div class="dim-item"><span class="dim-label">市场嗅觉</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#f59e0b"></div></div></div>
+          <div class="dim-item"><span class="dim-label">行动惯性</span><div class="dim-bar"><div class="dim-fill" style="width:35%;background:#6366f1"></div></div></div>
+          <div class="dim-item"><span class="dim-label">决策算账</span><div class="dim-bar"><div class="dim-fill" style="width:55%;background:#ec4899"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Print button functionality
+    function printPage() {
+      window.print();
+    }
+  </script>
+</body>
+</html>

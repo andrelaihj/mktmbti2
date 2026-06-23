@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>十五型诊断结果预览</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0f; color: #fff; line-height: 1.6; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 30px; color: #fff; font-size: 24px; }
+    .type-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; padding: 15px; background: #1a1a2e; border-radius: 12px; }
+    .type-btn { padding: 8px 12px; border-radius: 20px; border: none; cursor: pointer; font-size: 12px; transition: all 0.2s; background: #2a2a4e; color: #888; }
+    .type-btn:hover { background: #3a3a5e; color: #fff; }
+    .type-btn.active { background: #6366f1; color: #fff; }
+    .result-card { background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%); border-radius: 20px; padding: 25px; border: 1px solid #2a2a4e; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .emoji { font-size: 60px; margin-bottom: 15px; }
+    .type-letter { font-size: 48px; font-weight: 900; color: #fff; }
+    .title { font-size: 22px; font-weight: 700; color: #fff; margin: 10px 0; }
+    .tag { display: inline-block; padding: 4px 12px; background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 12px; border-radius: 20px; margin-top: 10px; }
+    .summary { color: #94a3b8; font-size: 14px; margin: 15px 0; line-height: 1.8; text-align: justify; }
+    .section { margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; }
+    .section-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .strengths .section-title { color: #10b981; }
+    .weakness .section-title { color: #fbbf24; }
+    .opportunity .section-title { color: #818cf8; }
+    .reminder .section-title { color: #f87171; }
+    .section-content { font-size: 13px; color: #cbd5e1; line-height: 1.7; }
+    .section-content div { margin-bottom: 8px; }
+    .section-content div:last-child { margin-bottom: 0; }
+    .actions-list { list-style: none; }
+    .actions-list li { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; }
+    .actions-list li:last-child { border-bottom: none; }
+    .action-num { width: 24px; height: 24px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .action-text { color: #cbd5e1; font-size: 13px; }
+    .advice-box { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 15px; text-align: center; }
+    .advice-label { font-size: 12px; color: #818cf8; margin-bottom: 5px; }
+    .advice-text { font-size: 16px; font-weight: 600; color: #fff; }
+    .dimensions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .dim-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; }
+    .dim-label { font-size: 11px; color: #64748b; margin-bottom: 5px; }
+    .dim-bar { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+    .dim-fill { height: 100%; border-radius: 3px; }
+    .dim-value { font-size: 14px; font-weight: 600; }
+    .actions-section { margin-top: 20px; }
+    .print-btn { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: #6366f1; color: #fff; border: none; border-radius: 25px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+    .print-btn:hover { background: #4f46e5; }
+    @media print { body { background: #fff; color: #000; } .type-nav, .print-btn { display: none; } .result-card { box-shadow: none; border: 1px solid #ddd; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏭 出海诊断 - 十五型结果预览</h1>
+    
+    <div class="type-nav" id="typeNav"></div>
+    
+    <div class="result-card" id="resultCard">
+      <div class="header">
+        <div class="emoji" id="emoji"></div>
+        <div class="type-letter" id="typeLetter"></div>
+        <div class="title" id="title"></div>
+        <div class="tag" id="tag"></div>
+      </div>
+      
+      <div class="dimensions" id="dimensions"></div>
+      
+      <div class="summary" id="summary"></div>
+      
+      <div class="section strengths">
+        <div class="section-title">✅ 你的家底</div>
+        <div class="section-content" id="strengths"></div>
+      </div>
+      
+      <div class="section weakness">
+        <div class="section-title">📌 你的天赋课题</div>
+        <div class="section-content" id="weakness"></div>
+      </div>
+      
+      <div class="section opportunity">
+        <div class="section-title">🎯 你的机会路径</div>
+        <div class="section-content" id="opportunity"></div>
+      </div>
+      
+      <div class="section actions-section">
+        <div class="section-title">🚀 具体动作</div>
+        <ul class="actions-list" id="actions"></ul>
+      </div>
+      
+      <div class="section reminder">
+        <div class="section-title">💡 说句实在话</div>
+        <div class="section-content" id="reminder"></div>
+      </div>
+      
+      <div class="advice-box">
+        <div class="advice-label">你的出海第一步</div>
+        <div class="advice-text" id="advice"></div>
+      </div>
+    </div>
+  </div>
+  
+  <button class="print-btn" onclick="window.print()">🖨️ 打印当前结果</button>
+  
+  <script>
+    // 15种画像数据
+    const profiles = {
+      A: {
+        emoji: '🏭', type: 'A', title: '匠心独运',
+        summary: '你是那种宁愿在车间待到深夜，也要确保每一个螺丝都拧紧的人。别人觉得你固执，你自己知道这叫专业。你相信真正的好东西不需要吆喝，只需要等待懂它的人出现。但在这个信息爆炸的时代，"酒香不怕巷子深"这句老话，似乎越来越不灵了。',
+        dimensions: { capacity: 85, market: 35, action: 40, decision: 55 },
+        strengths: [
+          '品质管控近乎偏执，产品在业内有口碑',
+          '车间管理有序，供应链环节尽在掌控',
+          '成本意识强，每分钱去处都有账可查',
+          '产能弹性好，能同时调度多条产线'
+        ],
+        weakness: '• 过度执着细节，影响决策效率\n• 品质与营销失衡，酒香也怕巷子深\n• 不善展示产品，好东西卖不出好价\n• 难以授权他人，事事亲力亲为',
+        opportunity: '• 品质出海风口已至，高端制造正当时\n• 只需改变"让人看见"的方式\n• 专业产品手册 + 平台布局 + 展会亮相\n• 轻营销动作，比熬夜加班更能改变局面',
+        actions: [
+          '制作一套专业的英文产品手册，让品质可视化——用老外看得懂的语言和视觉，讲好你的产品故事',
+          '在国际B2B平台（阿里巴巴国际站、环球资源）建立店铺，让客户主动找上门',
+          '参加一次行业展会，哪怕是国内举办的国际采购商专场，面对面展示产品力'
+        ],
+        reminder: '好产品自己会说话，这是真的。\n\n但前提是，得有人愿意走到你面前来听它说话。\n\n你已经把产品打磨到极致了，现在差的那一步，不是更拼命地做产品，而是更聪明地展示产品。\n\n主动展示，是金子才会发光的最后一公里。',
+        tag: '专注制造', advice: '让产品被世界看见'
+      },
+      B: {
+        emoji: '🔮', type: 'B', title: '洞若观火',
+        summary: '你是那种刷到一条行业新闻，就能联想到三条产业链走向的人。别人说你想太多，但你知道这叫洞察力。你总能在别人还没反应过来的时候，就嗅到机会的味道。问题是，你闻到了，却迟迟没有伸手去抓。',
+        dimensions: { capacity: 45, market: 80, action: 40, decision: 50 },
+        strengths: [
+          '市场洞察力强，能从新闻看到商机',
+          '信息整合能力突出，善于提炼规律',
+          '全局视野好，多维度综合考量',
+          '冷静理性，不被短期波动左右'
+        ],
+        weakness: '• 过度分析反而止步不前\n• 永远觉得"条件还不够成熟"\n• 机会窗口在你观望时悄然关闭\n• 笔记本写满洞察，从未落地',
+        opportunity: '• 眼光是稀缺资产，变现需要行动\n• 不需要All in，先用最小成本试水\n• 选一个方向，找当地供应商聊聊\n• 先干起来，边干边想',
+        actions: [
+          '选定一个最看好的目标市场，花一周时间深入研究——不是泛泛了解，是扎进去搞清楚当地玩家的玩法',
+          '找一家已经在当地做出成绩的供应商或服务商，喝杯咖啡聊聊——不一定要合作，只是获取第一手情报',
+          '用最小成本测试市场反应：选一个产品，挂到一个平台上，看三周的自然流量'
+        ],
+        reminder: '你知道那些机会是真的。\n\n问题不是你看没看见，而是你动不动。\n\n你看见的那些机会，正在被那些"看见了就干"的人抢走。他们可能没你想得清楚，但他们比你先迈出了第一步。\n\n洞察落地，从第一步开始。先干起来，再边干边想。',
+        tag: '洞察先机', advice: '让洞察转化为行动'
+      },
+      C: {
+        emoji: '🚀', type: 'C', title: '冲动型选手',
+        summary: '你是那种早上想到一个点子，下午就已经开始执行的人。别人还在开会讨论可行性，你已经踩过坑、交过学费了。你相信"做了再说"，觉得那些想太多的人都是在浪费时间。但现实总是给你泼冷水——你跑得很快，但好像总是在跑冤枉路。',
+        dimensions: { capacity: 50, market: 55, action: 85, decision: 35 },
+        strengths: [
+          '执行力是天赋，想到就干不犹豫',
+          '不怕失败，大不了重来',
+          '不被焦虑消耗，快速推进事务',
+          '速度是武器，抢占先机'
+        ],
+        weakness: '• 踩坑无数，学费交了又交\n• 用战术勤奋掩盖战略懒惰\n• 方向不对，跑得越快离目标越远\n• 不擅画靶心，闭眼乱射'
+        ,
+        opportunity: '• 执行力是超能力，只需装上瞄准镜\n• 行动前花10分钟想清楚"为什么要做"\n• 问自己：最坏结果是什么？能承受吗？\n• 有策略地冲锋，而非无目的地乱撞',
+        actions: [
+          '每个行动之前，写一个简单的"为什么要做"——不用长，三句话：我想达成什么？我需要投入什么？失败了怎么办？',
+          '建立行动复盘机制：每周花30分钟回顾这周的行动，哪些有效？哪些是冤枉路？为什么？写下来。',
+          '找一个会算账的人做搭档——不需要他替你做决定，只需要在你冲动之前问一句："你想清楚了吗？"'
+        ],
+        reminder: '你跑得很快，这很好。\n\n但如果方向是错的，跑得越快，离目标越远。\n\n停下来，想清楚，再出发。不是让你变成一个犹豫的人，而是让你把天赋用在正确的方向上。\n\n磨刀不误砍柴工。想清楚再行动，不是懦弱，是让你的勇敢更有价值。',
+        tag: '行动派', advice: '先想清楚再行动'
+      },
+      D: {
+        emoji: '🧮', type: 'D', title: '想太多先生',
+        summary: '你是那种遇到问题会想出十种解决方案的人。别人羡慕你的周全，你却知道这背后藏着什么——你害怕做决定。每一个选择在你眼里都像是一道生死题，因为你太清楚每个选项背后可能藏着什么风险。于是你想啊想，算啊算，分析报告写了一沓又一沓，但最后还是迈不出那一步。',
+        dimensions: { capacity: 50, market: 50, action: 35, decision: 85 },
+        strengths: [
+          '风险意识强，能一眼看到机会背后的坑',
+          '分析能力突出，数据条理清晰',
+          '决策有依据，不脑子发热拍板',
+          '不被短期诱惑，坚持独立判断'
+        ],
+        weakness: '• 决策如生死题，害怕选择本身\n• 永远觉得"还有没想到的风险"\n• 停在准备阶段，难以迈出第一步\n• 分析报告无数，都是"未完成"状态',
+        opportunity: '• 想得够多了，缺的是按下启动键\n• 不是要更多信息，是要决策勇气\n• 给自己设时限：本周选定目标市场\n• 70%把握就可以行动了',
+        actions: [
+          '设定一个"最小可行行动"：今天就做一件小事——比如给一个海外客户发封邮件',
+          '给自己一个决策时限：每个分析项目给自己设一个截止日期，到点就做决定',
+          '接受"足够好的决策"：不是所有决定都需要100%把握才能做，70%把握就可以行动了'
+        ],
+        reminder: '你分析了100遍，但不行动一遍都等于零。\n\n市场不等人。你算得越细，机会跑得越远。\n\n那些你担心的事情，有一半不会发生；发生的那些，有一半没那么严重。\n\n你最大的敌人不是风险，而是你自己那颗"再等等看"的心。',
+        tag: '思考型', advice: '想够了，该动了'
+      },
+      E: {
+        emoji: '⭐', type: 'E', title: '六边形战士',
+        summary: '你是那种让很多人都羡慕的类型——好像什么都不缺：要资源有资源，要眼光有眼光，要能力也有能力。你自己心里也清楚，牌面不算差。但问题来了：明明什么都有，为什么就是迈不出那一步？',
+        dimensions: { capacity: 75, market: 72, action: 68, decision: 70 },
+        strengths: [
+          '能力全面均衡，无明显短板',
+          '综合实力强，能够独当一面',
+          '适应能力好，能在变化中保持稳定',
+          '抗风险能力突出，很少措手不及'
+        ],
+        weakness: '• 什么都有，却不知为何迈不出步子\n• 资源眼光能力都在，就是不动\n• "再等等看吧"是口头禅\n• 不是没有能力，是不敢行动',
+        opportunity: '• 站在金矿边上却还在挖土\n• 不需要更多准备，现在就可以开始\n• 不需要等更好时机，需要的是第一步\n• 装备齐全，先迈出第一步',
+        actions: [
+          '选定一个目标市场和渠道：不需要是最完美的选择，只需要是你目前最有把握的一个',
+          '找一家靠谱的服务商加速：专业的事交给专业的人，让别人帮你填补短板',
+          '设定3个月的第一个里程碑：比如"3个月内完成平台入驻"'
+        ],
+        reminder: '你已经比大多数人都准备好了。\n\n装备齐全，粮草充足，地图在手——但你还在原地。\n\n不是你没有能力，是你不敢。\n\n出海这扇门，只有你愿意迈出那一步才会为你打开。再好的装备，放在仓库里只会生锈。',
+        tag: '全面均衡', advice: '迈出第一步'
+      },
+      F: {
+        emoji: '🤔', type: 'F', title: '差一步先生',
+        summary: '你是那种对出海有认知、了解大概方向、知道该做些什么，但就是停在"准备阶段"的人。你不是完全不懂，你只是觉得自己还没准备好。你花了很多时间在学习、观望、收集信息，但每次快要开始的时候，就会冒出来一个新问题："等等，我是不是还漏了什么？"',
+        dimensions: { capacity: 55, market: 58, action: 52, decision: 56 },
+        strengths: [
+          '有一点基础认知，不是完全的小白',
+          '不排斥新事物，愿意持续学习',
+          '心态平稳，愿意沉下心准备',
+          '愿意观望学习，不会盲目冲进去'
+        ],
+        weakness: '• 第N次"准备开始"了\n• 上月亚马逊，这月独立站，下月换方向\n• 总觉得"再给我一点时间就能准备好"\n• 永远准备不好',
+        opportunity: '• 不需要更多准备，接受不完美的开始\n• 完成比完美重要\n• 选一个平台，先做起来\n• 边做边学，比想清楚再做更高效',
+        actions: [
+          '停止收集信息：把手机里的出海资料、收藏的文章、买的课程都放一边',
+          '给自己设一个7天的deadline：7天之内必须完成平台注册+至少3个产品上架',
+          '找一个已经在出海的人，带你走第一步：不需要手把手教，只需要在你卡住的时候问一句'
+        ],
+        reminder: '你最大的敌人不是外部条件，是你那颗"再等等看"的心。\n\n你准备的时间已经够长了。知识已经够了。认知已经够了。\n\n差的不是信息，差的是行动。\n\n市场不等人。你在等的每一天，都是别人在赶的路。',
+        tag: '等待型', advice: '现在就开始'
+      },
+      G: {
+        emoji: '💨', type: 'G', title: '机会猎人',
+        summary: '你是那种对机会特别敏感的人。哪里有风口，哪里就有你的身影；哪里有红利，哪里就有你的脚印。你不是那种坐以待毙的人，你永远在行动、在尝试、在探索新方向。但问题来了——你好像什么都试过，但什么都没做成。',
+        dimensions: { capacity: 40, market: 70, action: 70, decision: 35 },
+        strengths: [
+          '机会嗅觉敏锐，能第一时间感知风口',
+          '反应速度快，看到机会就冲',
+          '愿意尝试新事物，不固步自封',
+          '适应变化能力强，能迅速调转方向'
+        ],
+        weakness: '• 什么试过，什么没做成\n• 永远从一个坑跳到另一个坑\n• 追逐下一个机会，不深耕任何领域\n• 到处采蜜但不酿蜜',
+        opportunity: '• 嗅觉是天赋，需要落在正确的土地\n• 不是找更多机会，是锁定一个深挖\n• 问自己：过去三年做得最久的是什么？\n• 找到一朵花，深挖下去',
+        actions: [
+          '列出现在所有在做的出海尝试：然后砍掉一半，只留最能让你坚持的那一个',
+          '选择一个有潜力的市场或赛道，用半年时间深挖：不是蜻蜓点水，是真正地扎进去',
+          '建立自己的核心客户池：与其到处撒网，不如深耕一小片鱼塘'
+        ],
+        reminder: '你像一只蝴蝶，到处采蜜但不酿蜜。\n\n蜻蜓点水式的努力，永远比不上在一个领域的深耕。\n\n找到一朵花，深挖下去，才能采到真正的蜜。\n\n你的嗅觉是优势，但嗅觉不等于收获。收获需要时间、需要坚持、需要聚焦。',
+        tag: '机会型', advice: '锁定一个，深挖下去'
+      },
+      H: {
+        emoji: '🌈', type: 'H', title: '规划型选手',
+        summary: '你是那种脑子里装着完整帝国的人。你对出海有自己的理解，有清晰的规划，甚至已经想好了五年后的愿景。你的PPT可能比很多咨询公司做的都专业，你的规划可能比很多企业高管都完善。但问题是——你的规划，好像永远停在第一步。',
+        dimensions: { capacity: 70, market: 70, action: 35, decision: 55 },
+        strengths: [
+          '视野开阔，不局限于眼前',
+          '战略眼光好，能看到更大图景',
+          '知识储备丰富，研究过大量案例',
+          '善于规划，能拆解复杂项目'
+        ],
+        weakness: '• 计划从1.0到12.0，永远停在第一步\n• "再完善一下，再想清楚一点"\n• 计划赶不上变化，永远改不完\n• 脑子里装着完整帝国，身体在原地',
+        opportunity: '• 差的是"现在就开始"的那一步\n• 边干边调整，比想完美再干更高效\n• 把计划缩短到"今天能做的下一步"\n• 24小时内必须完成一个启动任务',
+        actions: [
+          '把计划缩短到"今天能做的下一步"：不要想五年后的事，先想今天能做什么',
+          '找一个一起行动的伙伴，互相监督：你负责规划，他负责推动你执行',
+          '给自己设一个24小时内的启动任务：比如"明天之前必须注册一个平台账号"'
+        ],
+        reminder: '你脑子里装着一个完整的出海帝国，但你的身体还在原地。\n\n计划再完美，不执行就是废纸。你的规划能力是你的武器，但武器不开火，就永远只是摆设。\n\n别再躺在床上规划帝国了。站起身，走出去，先迈出第一步。',
+        tag: '规划型', advice: '先干起来，边干边想'
+      },
+      I: {
+        emoji: '🛡️', type: 'I', title: '基业长青',
+        summary: '你是那种让合作伙伴非常放心的人。你做决策有依有据，不会脑子一热就拍板；你管理财务小心翼翼，绝不会入不敷出；你做事情讲究循序渐进，相信一步一个脚印才能走得更远。但有时候，你会觉得自己是不是太保守了？',
+        dimensions: { capacity: 70, market: 40, action: 40, decision: 70 },
+        strengths: [
+          '风险意识强，很少踩大坑',
+          '财务管理出色，精打细算',
+          '长期主义者，不被短期利益诱惑',
+          '抗压能力强，能保持冷静'
+        ],
+        weakness: '• 有时会想"当初冲一把是不是不一样"\n• 稳健 = 保守？不见得\n• 错过的机会让你羡慕又后悔\n• 需要找到稳健出海的方式',
+        opportunity: '• 稳健是天赋，需要找到适合的出海方式\n• 找到低风险的切入点\n• 先用一个产品、一个市场试水\n• 用订单验证可行性，再考虑扩大',
+        actions: [
+          '找一个成熟的出海服务商合作：让专业的人帮你评估风险、规划路径',
+          '先用一个产品，一个市场试水：不追求第一年就要做多大，先追求"跑通"',
+          '用订单验证可行性，再考虑扩大：不要一开始就投入大量资金'
+        ],
+        reminder: '• 稳健是你的优点，这是真的\n• 但稳健不等于保守，不等于原地不动\n• 找一个低风险的方式，让稳健成为优势\n• 出海不只有"冲"这一条路',
+        tag: '稳扎稳打', advice: '用稳健的方式迈出第一步'
+      },
+      J: {
+        emoji: '🌀', type: 'J', title: '永远慢半拍的追风人',
+        summary: '你是那种什么火就做什么的人。亚马逊火的时候做亚马逊，独立站火的时候搞独立站，TikTok火的时候又去做TikTok……每次你都冲得很猛，但每次都慢了一步。当你知道某个机会的时候，这个机会已经被第一批人做过了；当你决定入场的时候，市场已经开始内卷了。',
+        dimensions: { capacity: 35, market: 40, action: 70, decision: 35 },
+        strengths: [
+          '行动力强，说干就干',
+          '愿意尝试新事物，不排斥风口',
+          '嗅觉灵敏，能感知风向变化',
+          '不惧怕变化，愿意跟随趋势调整'
+        ],
+        weakness: '• 三年来做成过一件事吗？\n• 每次都追风口的尾巴，慢一步\n• 永远在追，永远慢半拍\n• 什么火做什么，什么都没做成',
+        opportunity: '• 从追风者变成造风者\n• 问自己三个问题：产品、市场、客户\n• 选一个赛道，用一年时间深耕\n• 建立自己的核心壁垒',
+        actions: [
+          '停下来问自己三个问题：我能提供什么独特价值？我要深耕哪个市场？我的核心客户是谁？',
+          '选择一个赛道，用1年时间深耕：不是蜻蜓点水，是真正地扎进去',
+          '建立自己的核心壁垒：不是追风，是在一个领域持续输出'
+        ],
+        reminder: '• 你最大的问题，是没有自己的根据地\n• 到处打游击，一个城池都没拿下\n• 停下来，想清楚，然后在一个领域扎根\n• 这是唯一的出路',
+        tag: '追风型', advice: '停止追风，开始造风'
+      },
+      K: {
+        emoji: '🎒', type: 'K', title: '厉兵秣马',
+        summary: '你是那种做事情之前一定要把功课做足的人。你花了大量时间研究平台规则，研究目标市场，研究竞争对手，研究政策法规……你的准备资料可能比很多专业的咨询报告都详尽。你觉得自己准备得足够充分了，足以应对出海路上的各种挑战。但问题来了——你准备了这么久，好像还是没迈出那一步。',
+        dimensions: { capacity: 80, market: 75, action: 35, decision: 55 },
+        strengths: [
+          '准备充分周全，了解可能比从业者深入',
+          '资质证书齐全，商标认证都已备好',
+          '风险意识强，已想好应对之策',
+          '有品牌意识，早早思考护城河'
+        ],
+        weakness: '• 准备了这么久，到底在等什么？\n• 等把所有平台规则都搞清楚？\n• 等把所有市场都研究透？\n• 准备是永无止境的',
+        opportunity: '• 已经比大多数人都准备得更好了\n• 别人踩坑换来的经验，你已拥有\n• 知识体系扎实，有系统的认知框架\n• 装备齐全，只差上场',
+        actions: [
+          '不要等了，现在就开始联系客户',
+          '找一个有经验的出海顾问带你',
+          '用实战来验证你的准备'
+        ],
+        reminder: '你已经装备齐全了，这是真的。\n\n你唯一缺的就是——上场。\n\n不要再用"准备"来拖延了。今天，给客户写第一封邮件。',
+        tag: '准备周全', advice: '让准备转化为成果'
+      },
+      L: {
+        emoji: '⚡', type: 'L', title: '一腔热血的门外汉',
+        summary: '你是那种对出海充满幻想的人。看着别人晒订单、晒收入，你心里痒痒的，觉得自己上也能行。但当你真正开始思考"我能做什么"的时候，脑子里一片空白。你有热情，但热情不能当产品卖；有野心，但野心不能当客户用。',
+        dimensions: { capacity: 35, market: 35, action: 35, decision: 35 },
+        strengths: [
+          '有心气、有热情，不甘于现状',
+          '愿意尝试新事物，愿意走出舒适区',
+          '没有固化思维，愿意探索',
+          '有改变现状的强烈意愿'
+        ],
+        weakness: '• 有工厂吗？有稳定产品吗？\n• 有懂英文的业务员吗？\n• 有海外客户资源吗？有多少启动资金？\n• 大部分答案是"没有"或"不确定"',
+        opportunity: '• 先泼自己一盆冷水\n• 诚实地盘点自己，摊开家底\n• 找到可以切入的细分赛道\n• 知道自己能做什么，是第一步',
+        actions: [
+          '花一周时间盘点：产品、产能、资金',
+          '找到3-5个领域内做得好的人，研究他们',
+          '找一个在做的工厂，先去参观学习'
+        ],
+        reminder: '• 你现在的状态，是在危险边缘试探\n• 不是试探出海的可能性，是在试探镰刀的锋利程度\n• 卖课的人最喜欢你这种：热情高涨、认知空白\n• 在搞清楚能做什么之前，先管好钱包',
+        tag: '盲目探索', advice: '先搞清楚自己，再谈出海'
+      },
+      M: {
+        emoji: '📊', type: 'M', title: '想得太多，算了不动',
+        summary: '你是那种做决策之前必须把所有数据都算清楚的人。不冲动、不跟风、相信数字不骗人。于是你花大量时间建模、算账、推演，把每一种可能的结果都算得清清楚楚。但算完之后呢？发现：好像没有一个选项是稳赚不赔的。于是你继续算，继续研究，继续分析……永远在岸上算，永远不下水。',
+        dimensions: { capacity: 60, market: 60, action: 35, decision: 75 },
+        strengths: [
+          '数据分析能力是核心武器',
+          '成本意识极强，精打细算',
+          '理性不冲动，不被情绪左右',
+          '风险识别准确，能预判失败原因'
+        ],
+        weakness: '• 算得越清楚，反而越不敢动\n• 每一个数字都在说"还不行"\n• 不是在做决策，是在找借口\n• 永远在岸上算，永远不下水',
+        opportunity: '• 分析能力是翅膀，不扇动飞不起来\n• 不是想清楚再动，是动起来边做边调整\n• 设定一个"可接受亏损"上限\n• 带着这个上限去尝试',
+        actions: [
+          '设定"可接受亏损"数字，带着上限去尝试',
+          '用小步快跑代替大而全的分析',
+          '找一个出海成功的人，听他的建议'
+        ],
+        reminder: '你算的每一个数字，都在告诉你"还不行"。\n\n但真相是：出海这件事，从来不是等所有条件成熟了才开始的。\n\n你缺的不是分析能力，是"先干了再说"的勇气。',
+        tag: '精算型', advice: '算够了，该行动了'
+      },
+      N: {
+        emoji: '🔥', type: 'N', title: '想得太多，做得太少',
+        summary: '你是那种一想到出海就热血沸腾的人。有梦想、有野心，觉得自己一定能干出一番事业。但现实是：你现在连一张海外订单都没有。热血是好东西，但热血不能当产品卖，不能当客户用，不能当物流走。你的野心和你的能力之间，隔着一道你还没意识到的鸿沟。',
+        dimensions: { capacity: 40, market: 75, action: 75, decision: 35 },
+        strengths: [
+          '目标感极强，不达目的不罢休',
+          '热情能感染身边的人',
+          '愿意投入，无论是时间还是金钱',
+          '不惧怕挑战，保持积极心态'
+        ],
+        weakness: '• 现在有海外订单吗？大概没有\n• 订单不会从天上掉下来\n• 需要产品、客户、渠道、谈判、交付能力\n• 这些不是靠热血就能解决的',
+        opportunity: '• 野心需要落地\n• 第一步：评估产能是否支撑野心\n• 第二步：找到愿意尝试的第一批客户\n• 第三步：用订单验证市场假设',
+        actions: [
+          '评估产能能否支撑野心',
+          '制定切实可行的扩张计划',
+          '用订单来验证市场'
+        ],
+        reminder: '热血是廉价的，能力是稀缺的。\n\n你有热情不稀奇，每个人都有。真正稀缺的，是把热情转化为价值的能力。\n\n从今天起，少谈梦想，多谈订单。',
+        tag: '志在四方', advice: '让热情找到落点'
+      },
+      O: {
+        emoji: '🥚', type: 'O', title: '还没入门的初学者',
+        summary: '你是那种刚刚听说"跨境电商"、"海外市场"这些词的人。可能朋友跟你提了一句，可能刷到了一条视频，你就觉得自己也行。说实话，你现在的出海认知水平，大概相当于刚知道"1+1=2"就去参加奥数竞赛——不是谦虚，是真的还没入门。',
+        dimensions: { capacity: 35, market: 35, action: 35, decision: 55 },
+        strengths: [
+          '没有固化思维，没有先入为主的偏见',
+          '愿意从零开始学习',
+          '有学习的好奇心',
+          '没有历史包袱'
+        ],
+        weakness: '• 亚马逊FBA是什么？独立站怎么建？\n• 谷歌广告怎么投？海外客户开发信怎么写？\n• 国际物流怎么走？\n• 听完这些问题一脸懵',
+        opportunity: '• 先别急着出海，先把基础打好\n• 你现在最需要的是认知，不是机会\n• 找一个有结果的人，老老实实跟着学\n• 用一个月时间建立第一个认知框架',
+        actions: [
+          '找一个有结果的出海领域的人',
+          '花1个月时间系统学习一个领域',
+          '找到一个细分赛道，深挖下去'
+        ],
+        reminder: '你现在最大的问题，是不知道自己要学什么。\n\n因为你不知道自己不懂什么，所以会东学一点西学一点，浪费大量时间却收效甚微。\n\n在你建立基本认知框架之前，所有想象都是空谈。',
+        tag: '白纸型', advice: '找到对的老师，少走弯路'
+      }
+    };
+
+    const dimColors = { capacity: '#10b981', market: '#f59e0b', action: '#6366f1', decision: '#ec4899' };
+    const dimNames = { capacity: '产能底气', market: '市场嗅觉', action: '行动惯性', decision: '决策算账' };
+
+    function renderResult(type) {
+      const p = profiles[type];
+      
+      document.getElementById('emoji').textContent = p.emoji;
+      document.getElementById('typeLetter').textContent = p.type + '型';
+      document.getElementById('title').textContent = p.title;
+      document.getElementById('tag').textContent = p.tag;
+      document.getElementById('summary').textContent = p.summary;
+      // Weakness & Opportunity
+      document.getElementById('weakness').innerHTML = p.weakness.split('\n').map(s => s.trim() ? `<div>• ${s}</div>` : '').join('');
+      document.getElementById('opportunity').innerHTML = p.opportunity.split('\n').map(s => s.trim() ? `<div>• ${s}</div>` : '').join('');
+      // Reminder
+      document.getElementById('reminder').innerHTML = p.reminder.split('\n').map(s => s.trim() ? `<div>• ${s}</div>` : '').join('');
+      document.getElementById('advice').textContent = p.advice;
+      
+      // Dimensions
+      const dimsHtml = Object.entries(p.dimensions).map(([key, value]) => `
+        <div class="dim-item">
+          <div class="dim-label">${dimNames[key]}</div>
+          <div class="dim-bar"><div class="dim-fill" style="width:${value}%;background:${dimColors[key]}"></div></div>
+          <div class="dim-value" style="color:${dimColors[key]}">${value}</div>
+        </div>
+      `).join('');
+      document.getElementById('dimensions').innerHTML = dimsHtml;
+      
+      // Strengths
+      document.getElementById('strengths').innerHTML = p.strengths.map(s => `<div>• ${s}</div>`).join('');
+      
+      // Actions
+      document.getElementById('actions').innerHTML = p.actions.map((a, i) => `
+        <li><span class="action-num">${i + 1}</span><span class="action-text">${a}</span></li>
+      `).join('');
+      
+      // Update nav buttons
+      document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+    }
+
+    // Create nav buttons
+    const navHtml = Object.keys(profiles).map(type => 
+      `<button class="type-btn${type === 'A' ? ' active' : ''}" data-type="${type}" onclick="renderResult('${type}')">${profiles[type].emoji} ${type}</button>`
+    ).join('');
+    document.getElementById('typeNav').innerHTML = navHtml;
+    
+    // Render first profile
+    renderResult('A');
+  </script>
+</body>
+</html>

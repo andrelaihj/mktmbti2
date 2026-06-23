@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局样式 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* 自定义动画 */
+@keyframes floatGradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 动画类 */
+.animate-float-gradient {
+  animation: floatGradient 8s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.25s ease-out forwards;
+}
+
+/* 背景渐变 */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #0B0B0F 0%, #1A1A2E 50%, #0B0B0F 100%);
+  background-size: 200% 200%;
+}
+
+/* 玻璃态效果 */
+.glass {
+  background: rgba(23, 23, 32, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 脉冲环动画 */
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::before,
+.pulse-ring::after,
+.pulse-ring .inner {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid #818cf8;
+}
+
+.pulse-ring::before {
+  width: 80px;
+  height: 80px;
+  animation: pulseRing 1.5s ease-out infinite;
+}
+
+.pulse-ring::after {
+  width: 80px;
+  height: 80px;
+  animation: pulseRing 1.5s ease-out 0.5s infinite;
+}
+
+.pulse-ring .inner {
+  width: 80px;
+  height: 80px;
+  animation: pulseRing 1.5s ease-out 1s infinite;
+}
+
+/* 按钮样式 */
+.btn-primary {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold;
+  @apply px-8 py-4 rounded-full;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/30;
+  @apply active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold;
+  @apply w-full py-4 rounded-full;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:opacity-90;
+}
+
+/* 输入框样式 */
+.input-field {
+  @apply w-full bg-neutral-800 border border-neutral-700 rounded-lg;
+  @apply px-4 py-3 text-white;
+  @apply placeholder:text-neutral-500;
+  @apply focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+  @apply transition-all duration-200;
+}
+
+/* 卡片样式 */
+.card {
+  @apply bg-neutral-900/60 backdrop-blur-sm rounded-2xl;
+  @apply border border-neutral-800/50;
+}
+
+.card-elevated {
+  @apply bg-dark-card/60 backdrop-blur-sm rounded-2xl;
+  @apply border border-neutral-700/30;
+}
+
+/* 进度条 */
+.progress-bar {
+  @apply h-1 bg-neutral-800 rounded-full overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full;
+  @apply transition-all duration-500 ease-out;
+}
+
+/* 量表按钮 */
+.scale-btn {
+  @apply w-12 h-12 rounded-full;
+  @apply bg-neutral-800 text-neutral-400;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:ring-2 hover:ring-indigo-400/50 hover:scale-105;
+}
+
+.scale-btn.selected {
+  @apply bg-indigo-500 text-white;
+}
+
+/* 步骤序号 */
+.step-number {
+  @apply w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300;
+  @apply flex items-center justify-center;
+  @apply text-sm font-bold;
+}
+
+/* 移动端触摸优化 */
+@media (max-width: 640px) {
+  .scale-btn {
+    @apply w-11 h-11;
+  }
+}
+
+/* 隐藏滚动条但保持功能 */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
