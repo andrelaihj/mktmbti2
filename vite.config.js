@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
-const isStandalone = process.argv.includes('--standalone');
+const isStandalone = process.argv.includes('--offline');
 
 // 两种打包模式：
 //   npm run build         → Netlify 部署模式（API 走函数）

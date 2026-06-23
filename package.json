@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:offline": "vite build --standalone",
+    "build:offline": "vite build -- --standalone",
     "preview": "vite preview"
   },
   "dependencies": {
