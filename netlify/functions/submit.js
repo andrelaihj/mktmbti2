@@ -122,10 +122,10 @@ exports.handler = async function (event, context) {
       '提交时间': new Date().toISOString(),
       '诊断类型': diagnosis?.type || '',
       '画像标签': diagnosis?.tag || '',
-      '产能底气': diagnosis?.dimensions?.capacity || 0,
-      '市场嗅觉': diagnosis?.dimensions?.market || 0,
-      '行动惯性': diagnosis?.dimensions?.action || 0,
-      '决策算账': diagnosis?.dimensions?.decision || 0,
+      '产能底气': { number: Number(diagnosis?.dimensions?.capacity) || 0 },
+      '市场嗅觉': { number: Number(diagnosis?.dimensions?.market) || 0 },
+      '行动惯性': { number: Number(diagnosis?.dimensions?.action) || 0 },
+      '决策算账': { number: Number(diagnosis?.dimensions?.decision) || 0 },
     };
 
     // 写入飞书
